@@ -1,0 +1,180 @@
+AVAX Trust Layer – Invariance Registry (Upgradeable)
+Overview
+
+The Invariance Registry is an upgradable smart contract designed to serve as a trusted on-chain registry of security risk assessments for smart contracts on Avalanche or other EVM chains.
+It allows verified analyzers to submit structured analysis data including risk levels, fraud surface scores, and categorized warnings. Curators and administrators govern role management and contract upgrades.
+
+This registry is useful in:
+
+On-chain threat intelligence systems
+
+User-facing dashboards or wallets indicating security status
+
+Risk scoring platforms
+
+DeFi safety protocols
+
+On-chain compliance or audit systems
+
+Built with:
+
+Solidity 0.8.24
+
+OpenZeppelin Upgradeable Contracts
+
+Role-based access control
+
+EnumerableSet for efficient contract traversal
+
+Key Features
+✔ Upgradable (UUPS)
+
+The contract is upgradeable using the UUPS pattern, protected under DEFAULT_ADMIN_ROLE.
+
+✔ Secure Role System
+
+Three roles govern function access:
+
+Role	Purpose
+DEFAULT_ADMIN_ROLE	Manages upgrades and RBAC
+ANALYZER_ROLE	Can submit contract analysis data
+CURATOR_ROLE	Reserved for future moderation or registry controls
+✔ Structured Risk Recording
+
+For each analyzed contract, the following is stored:
+
+Fraud Surface Score (0 – 1000)
+
+Risk Level (0–3):
+
+0 = SAFE
+
+1 = BOUNDED
+
+2 = DECEPTIVE
+
+3 = CATASTROPHIC
+
+Timestamp of latest update
+
+Warning count
+
+A set of warnings with:
+
+category
+
+message
+
+reference (optional URL)
+
+✔ Efficient Data Access
+
+Public view functions allow:
+
+Full analysis lookup
+
+Risk-only lookup
+
+Enumeration of all assessed contracts
+
+Quick determination of “safe” status
+
+Data Structures
+ContractAnalysis
+struct ContractAnalysis {
+    uint256 fraudSurface;
+    uint8   riskLevel;
+    uint40  lastUpdated;
+    uint16  warningCount;
+    bool    exists;
+}
+
+Warning
+struct Warning {
+    string category;
+    string message;
+    string reference;
+}
+
+Initialization
+
+Deployment requires calling:
+
+initialize(address initialAdmin)
+
+
+The initializer:
+
+Enables UUPS upgradeability
+
+Assigns DEFAULT_ADMIN_ROLE, ANALYZER_ROLE, and CURATOR_ROLE to the passed address
+
+Submitting an Analysis
+
+Analyses can only be submitted by accounts with ANALYZER_ROLE.
+
+registerAnalysis(
+    address contractAddress,
+    uint256 fraudSurface,
+    uint8 riskLevel,
+    Warning[] calldata warnings
+)
+
+Requirements:
+
+Contract address must be non-zero
+
+fraudSurface <= 1000
+
+riskLevel <= 3
+
+Maximum 20 warnings per submission
+
+Triggers events:
+
+ContractAnalyzed
+
+HighRiskDetected (if risk level ≥ 2)
+
+WarningsUpdated
+
+Reading Results
+Function	Purpose
+getAnalysis(address)	Returns all stored analysis metadata
+getRiskLevel(address)	Returns risk level or 255 if no analysis exists
+isSafe(address)	Quick boolean safety check
+analyzedCount()	Number of contracts analyzed
+getAnalyzedContracts()	Full list of analyzed contract addresses
+Events
+event ContractAnalyzed(address indexed contractAddress,
+                       uint256 fraudSurface,
+                       uint8 riskLevel,
+                       uint256 timestamp,
+                       address indexed analyzer);
+
+event HighRiskDetected(address indexed contractAddress,
+                       uint256 fraudSurface);
+
+event WarningsUpdated(address indexed contractAddress,
+                      uint256 count);
+
+Upgrade Authorization
+
+Upgrades require:
+
+onlyRole(DEFAULT_ADMIN_ROLE)
+
+
+via the _authorizeUpgrade() hook.
+
+Security Notes
+
+Only trusted accounts should receive ANALYZER_ROLE.
+
+The _warnings array is overridden per-analysis for gas efficiency.
+
+Storage gap reserved for future upgrades.
+
+License
+
+SPDX-License-Identifier: MIT
