@@ -1,0 +1,42 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Hardhat cache & artifacts
+artifacts/
+cache/
+typechain/
+typechain-types/
+
+# VSCode
+.vscode/
+.history/
+
+# Mac / Linux junk
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Coverage reports
+coverage/
+coverage.json
+lcov-report/
+
+# Build output
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
