@@ -1,3 +1,62 @@
-License
+MIT License
 
 SPDX-License-Identifier: MIT
+
+Copyright (c) 2025 AVAX Trust Layer Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+DISCLAIMER & SECURITY NOTICE
+
+This software is provided as-is for hackathon and development purposes. It is
+NOT AUDITED and should NOT be used in production without professional security
+review. The developers make NO WARRANTY as to the security, functionality, or
+fitness for any particular purpose.
+
+Key Risks:
+- Unaudited smart contracts may contain critical vulnerabilities
+- UUPS upgradeable pattern requires careful storage layout management
+- Role-based access control depends on proper initialization
+- EIP-712 signature validation is only as strong as the signer's key management
+
+Before deploying to mainnet:
+1. Conduct a full security audit by professional auditors
+2. Perform extensive testing on testnet
+3. Implement proper key management and access controls
+4. Review and understand all dependencies (OpenZeppelin, Hardhat, etc.)
+5. Have an upgrade and emergency response plan
+
+═══════════════════════════════════════════════════════════════════════════════
+
+THIRD-PARTY DEPENDENCIES
+
+This project uses the following open-source libraries under their respective licenses:
+
+- OpenZeppelin Contracts (MIT): https://github.com/OpenZeppelin/openzeppelin-contracts
+- OpenZeppelin Contracts Upgradeable (MIT): https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable
+- OpenZeppelin Hardhat Upgrades (MIT): https://github.com/OpenZeppelin/openzeppelin-hardhat-upgrades
+- Hardhat (MIT): https://github.com/NomicFoundation/hardhat
+- ethers.js (MIT): https://github.com/ethers-io/ethers.js
+- Solhint (MIT): https://github.com/protofire/solhint
+
+Consult the LICENSE files in respective node_modules directories for details.
+
+═══════════════════════════════════════════════════════════════════════════════
