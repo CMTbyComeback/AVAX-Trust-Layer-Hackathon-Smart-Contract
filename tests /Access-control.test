@@ -1,0 +1,78 @@
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
+
+describe("InvarianceRegistry – Roles & Access Control", () => {
+  let registry;
+  let admin;
+  let analyzer;
+  let curator;
+  let unauthorized;
+
+  beforeEach(async () => {
+    [admin, analyzer, curator, unauthorized] = await ethers.getSigners();
+
+    const Registry = await ethers.getContractFactory("InvarianceRegistry");
+    registry = await ethers.deployContract("InvarianceRegistry");
+    await registry.waitForDeployment();
+
+    // Initialize with admin
+    await registry.initialize(admin.address);
+  });
+
+  it("should assign DEFAULT_ADMIN_ROLE to initialAdmin", async () => {
+    const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+    const hasRole = await registry.hasRole(DEFAULT_ADMIN_ROLE, admin.address);
+    expect(hasRole).to.be.true;
+  });
+
+  it("should allow admin to grant ANALYZER_ROLE", async () => {
+    const ANALYZER_ROLE = await registry.ANALYZER_ROLE();
+
+    await registry.connect(admin).grantRole(ANALYZER_ROLE, analyzer.address);
+
+    const hasRole = await registry.hasRole(ANALYZER_ROLE, analyzer.address);
+    expect(hasRole).to.be.true;
+  });
+
+  it("should allow admin to grant CURATOR_ROLE", async () => {
+    const CURATOR_ROLE = await registry.CURATOR_ROLE();
+
+    await registry.connect(admin).grantRole(CURATOR_ROLE, curator.address);
+
+    const hasRole = await registry.hasRole(CURATOR_ROLE, curator.address);
+    expect(hasRole).to.be.true;
+  });
+
+  it("should prevent unauthorized account from granting roles", async () => {
+    const ANALYZER_ROLE = await registry.ANALYZER_ROLE();
+
+    await expect(
+      registry.connect(unauthorized).grantRole(ANALYZER_ROLE, analyzer.address)
+    ).to.be.revertedWithCustomError(registry, "AccessControlUnauthorizedAccount");
+  });
+
+  it("should allow admin to revoke roles", async () => {
+    const ANALYZER_ROLE = await registry.ANALYZER_ROLE();
+
+    // Grant role
+    await registry.connect(admin).grantRole(ANALYZER_ROLE, analyzer.address);
+    let hasRole = await registry.hasRole(ANALYZER_ROLE, analyzer.address);
+    expect(hasRole).to.be.true;
+
+    // Revoke role
+    await registry.connect(admin).revokeRole(ANALYZER_ROLE, analyzer.address);
+    hasRole = await registry.hasRole(ANALYZER_ROLE, analyzer.address);
+    expect(hasRole).to.be.false;
+  });
+
+  it("should prevent role renunciation by unauthorized account", async () => {
+    const ANALYZER_ROLE = await registry.ANALYZER_ROLE();
+
+    await registry.connect(admin).grantRole(ANALYZER_ROLE, analyzer.address);
+
+    // Unauthorized should not be able to revoke others' roles
+    await expect(
+      registry.connect(unauthorized).revokeRole(ANALYZER_ROLE, analyzer.address)
+    ).to.be.revertedWithCustomError(registry, "AccessControlUnauthorizedAccount");
+  });
+});
